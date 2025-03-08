@@ -26,7 +26,28 @@
 ```
 
 #### Демонстрация работы
-<div>
+<div style="text-align: center; font-style: italic;">
+  Запуск сервера в терминале<br>
+  <img src="screenshots/00-server-started.png"/><br>
+  Запрос на получение Athens.txt<br>
+  <img src="screenshots/01-get-athens.png"/><br>
+  Получен файл Athens.txt<br>
+  <img src="screenshots/02-athens-received.png"/><br>
+  Контент файла Athens.txt (сгенерирован ИИ)<br>
+  <img src="screenshots/03-athens-content.png"/><br>
+  Получение файла Beijing.txt<br>
+  <img src="screenshots/04-get-beijing.png"/><br>
+  Контент файла Beijing.txt (сгенерирован ИИ)<br>
+  <img src="screenshots/05-beijing-content.png"/><br>
+  Попытка получения несуществующего файла<br>
+  <img src="screenshots/06-not-found.png"/><br>
+  Логи сервера после всех операций<br>
+  <img src="screenshots/07-server-logs.png"/><br>
+  Получение файла с символами Юникода в имени<br>
+  <img src="screenshots/08-get-delhi.png"/><br>
+  Контент файла दिल्ली.txt (сгенерирован ИИ)<br>
+  <img src="screenshots/09-delhi-content.png"/><br>
+</div>
 
 ### Б. Многопоточный веб-сервер (2 балла)
 Реализуйте многопоточный сервер, который мог бы обслуживать несколько запросов
@@ -50,7 +71,14 @@ TCP-соединение от клиента он будет устанавли�
 ```
 
 #### Демонстрация работы
-todo
+<div style="text-align: center; font-style: italic;">
+  Получение файла Athens.txt<br>
+  <img src="screenshots/10-client-athens.png"/><br>
+  Получение файла Beijing.txt (обратите внимание, что размер данных больше 1024 бит)<br>
+  <img src="screenshots/11-client-beijing.png"/><br>
+  Попытка получения несуществующего файла<br>
+  <img src="screenshots/12-client-sanic.png"/><br>
+</div>
 
 ### Г. Ограничение потоков сервера (3 балла)
 Пусть ресурсы вашего сервера ограничены и вы хотите контролировать максимальное количество

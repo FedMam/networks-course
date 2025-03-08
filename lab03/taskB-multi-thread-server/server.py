@@ -6,7 +6,7 @@ import threading
 from urllib.parse import unquote
 
 FILES_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))) + '/files'
-GET_REQUEST_RE = r'GET /([^ ]+) HTTP/1\.(0|1).*'
+GET_REQUEST_RE = r'GET /([^ /]+) HTTP/1\.(0|1).*'
 ENCODING = 'iso-8859-1'
 HTML_BAD_REQUEST = '''<!DOCTYPE html>
 <html>
