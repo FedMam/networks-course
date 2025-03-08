@@ -30,7 +30,7 @@ HTML_NOT_FOUND = '''<!DOCTYPE html>
 
 
 def build_response(status_code: str = '200 OK', content_type: str = 'application/octet-stream', data: bytes = b''):
-    return (f'HTTP/1.1 200 OK\n' +
+    return (f'HTTP/1.1 {status_code}\n' +
             f'Content-Type: {content_type}\n' +
             f'Content-Length: {len(data)}\n' +
             f'Connection: close\n\n').encode(ENCODING) + data

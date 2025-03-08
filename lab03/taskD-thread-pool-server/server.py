@@ -2,7 +2,7 @@ import os
 import sys
 import socket
 import re
-import threading
+import concurrent.futures
 from urllib.parse import unquote
 
 FILES_DIR = os.path.dirname(os.path.dirname(os.path.abspath(sys.argv[0]))) + '/files'
@@ -79,12 +79,15 @@ def serve_client(clnt_sock, clnt_addr, clnt_id):
 
 if __name__ == '__main__':
     host = '127.0.0.1'
-    if len(sys.argv) < 2 or not sys.argv[1].isdigit():
-        print('usage: server.py <server-port>')
+    if len(sys.argv) < 3 or not sys.argv[1].isdigit() or not sys.argv[2].isdigit():
+        print('usage: server.py <server-port> <num-workers>')
         exit(-1)
     port = int(sys.argv[1])
     clnt_id = 0
     print(f'[INFO] Starting server at host {host}, port {port}...')
+
+    num_workers = int(sys.argv[2])
+    thread_pool = concurrent.futures.ThreadPoolExecutor(num_workers, thread_name_prefix='client_')
 
     try:
         serv_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -100,7 +103,6 @@ if __name__ == '__main__':
     while True:
         clnt_sock, addr = serv_sock.accept()
 
-        clnt_thread = threading.Thread(name=f'client_{clnt_id}', target=serve_client, args=(clnt_sock, addr, clnt_id))
-        clnt_thread.start()
+        thread_pool.submit(serve_client, clnt_sock, addr, clnt_id)
 
         clnt_id += 1
