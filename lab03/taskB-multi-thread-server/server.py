@@ -28,6 +28,16 @@ HTML_NOT_FOUND = '''<!DOCTYPE html>
     <p>The requested URL was not found on this server.</p>
 </body>
 </html>'''
+HTML_FORBIDDEN = '''<!DOCTYPE html>
+<html>
+<head>
+    <title>403 Forbidden</title>
+</head>
+<body>
+    <h1>403 Forbidden</h1>
+    <p>File name should not contain '/' characters</p>
+</body>
+</html>'''
 
 
 def build_response(status_code: str = '200 OK', content_type: str = 'application/octet-stream', data: bytes = b''):
@@ -49,6 +59,12 @@ def build_response_not_found():
                           data=HTML_NOT_FOUND.encode('utf-8'))
 
 
+def build_response_forbidden():
+    return build_response(status_code='403 Forbidden',
+                          content_type='text/html; charset=UTF-8',
+                          data=HTML_FORBIDDEN.encode('utf-8'))
+
+
 def serve_client(clnt_sock, clnt_addr, clnt_id):
     request = clnt_sock.recv(1024).decode(ENCODING)
 
@@ -64,7 +80,10 @@ def serve_client(clnt_sock, clnt_addr, clnt_id):
         else:
             filename = unquote(match.group(1))
             file_path = f'{FILES_DIR}/{filename}'
-            if not os.path.isfile(file_path):
+            if '/' in filename:
+                print(f'[ERRO] Forbidden: injection attempt')
+                clnt_sock.sendall(build_response_forbidden())
+            elif not os.path.isfile(file_path):
                 print(f'[ERRO] File not found: {filename}')
                 clnt_sock.sendall(build_response_not_found())
             else:

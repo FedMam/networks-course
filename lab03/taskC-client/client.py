@@ -1,13 +1,14 @@
 import sys
 import socket
 import re
+from urllib.parse import quote
 
 ENCODING = 'iso-8859-1'
 STATUS_CODE_RE = r'HTTP/1\.\d (\d+).*'
 
 
 def build_request(serv_host: str, serv_port: int, file_name: str):
-    return f'''GET /{file_name} HTTP/1.1
+    return f'''GET /{quote(file_name)} HTTP/1.1
 Host: {serv_host}:{serv_port}'''.encode(ENCODING)
 
 

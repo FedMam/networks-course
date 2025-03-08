@@ -47,6 +47,12 @@
   <img src="screenshots/08-get-delhi.png"/><br>
   Контент файла दिल्ली.txt (сгенерирован ИИ)<br>
   <img src="screenshots/09-delhi-content.png"/><br>
+  Попытка инъекции (получения файла из запрещённой директории)<br>
+  <img src="screenshots/13-injection.png"/><br>
+  Инъекция неудачна<br>
+  <img src="screenshots/14-injection-failed.png"/><br>
+  Лог сервера о попытке инъекции<br>
+  <img src="screenshots/15-injection-warning.png"/><br>
 </div>
 
 ### Б. Многопоточный веб-сервер (2 балла)
