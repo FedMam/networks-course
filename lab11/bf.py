@@ -1,4 +1,4 @@
-global_network_version = -1
+global_network_version = 0
 
 
 class Message:
@@ -19,7 +19,8 @@ class Router:  # a.k.a. node
 
     def broadcast(self, message: Message):
         for channel in self.channels:
-            channel.other_end(self).accept_message(message)
+            if channel.other_end(self) != message.dest_router:
+                channel.other_end(self).accept_message(message)
     
     def accept_message(self, message: Message):
         for channel in self.channels:
@@ -32,7 +33,7 @@ class Router:  # a.k.a. node
                 old_path = self.path_to_other.get(message.dest_router, None)
                 if old_path is None or \
                         message.version > old_path[2] or \
-                        (message.version == old_path[2] and channel.cost + message.path_cost < old_path[1]):
+                        channel.cost + message.path_cost < old_path[1]:
                     self.path_to_other[message.dest_router] = (neighbour, channel.cost + message.path_cost, message.version)
                     self.broadcast(Message(self, message.dest_router, channel.cost + message.path_cost, message.version))
                 break
@@ -60,7 +61,6 @@ def connect(router1: Router, router2: Router, cost: int) -> Channel:
     channel = Channel(router1, router2, cost)
     router1.channels.append(channel)
     router2.channels.append(channel)
-
     return channel
 
 
@@ -69,7 +69,14 @@ def broadcast_all(routers: list[Router]):
     
     global_network_version += 1
     for router in routers:
-        router.broadcast(Message(router, router, 0, global_network_version))
+        for channel in router.channels:
+            neighbour = channel.other_end(router)
+            if router.path_to_other.get(neighbour) is None or \
+                    router.path_to_other[neighbour][2] < global_network_version or \
+                    router.path_to_other[neighbour][1] > channel.cost:
+                router.path_to_other[neighbour] = (neighbour, channel.cost, global_network_version)
+
+            router.broadcast(Message(router, channel.other_end(router), channel.cost, global_network_version))
 
 
 def output_dist_table(routers: list[Router], cell_width: int=4):
