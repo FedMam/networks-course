@@ -14,8 +14,8 @@ class Router:  # a.k.a. node
     def __init__(self, id: int):
         self.id = id
         self.channels: list[Channel] = []
-        self.path_to_other: dict[Router, tuple[int, int]] = {}  # dest.router -> (path cost, version)
-        self.path_to_other[self] = (0, 10 ** 9)
+        self.path_to_other: dict[Router, tuple[Router, int, int]] = {}  # dest.router -> (next hop, path cost, version)
+        self.path_to_other[self] = (self, 0, 10 ** 9)
 
     def broadcast(self, message: Message):
         for channel in self.channels:
@@ -31,10 +31,10 @@ class Router:  # a.k.a. node
             if neighbour == message.src_router:
                 old_path = self.path_to_other.get(message.dest_router, None)
                 if old_path is None or \
-                        message.version > old_path[1] or \
-                        (message.version == old_path[1] and channel.cost + message.path_cost < old_path[0]):
-                    self.path_to_other[message.dest_router] = (channel.cost + message.path_cost, message.version)
-                    self.broadcast(Message(self, message.dest_router, *self.path_to_other[message.dest_router]))
+                        message.version > old_path[2] or \
+                        (message.version == old_path[2] and channel.cost + message.path_cost < old_path[1]):
+                    self.path_to_other[message.dest_router] = (neighbour, channel.cost + message.path_cost, message.version)
+                    self.broadcast(Message(self, message.dest_router, channel.cost + message.path_cost, message.version))
                 break
 
 
@@ -79,7 +79,7 @@ def output_dist_table(routers: list[Router], cell_width: int=4):
     for ri in routers:
         print(str(ri.id).rjust(cell_width), end='')
         for rj in routers:
-            print('|' + str(rj.path_to_other.get(ri, (None, None))[0]).rjust(cell_width), end='')
+            print('|' + str(rj.path_to_other.get(ri, (None, None))[1]).rjust(cell_width), end='')
         print()
 
 
